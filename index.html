@@ -361,11 +361,17 @@
         const exposésContainer = document.getElementById('exposés');
         let exposés = [];
 
-        // Load existing exposés from local storage
-        if (localStorage.getItem('exposés')) {
-            exposés = JSON.parse(localStorage.getItem('exposés'));
-            renderExposés();
-        }
+        // Load existing exposés from JSON file
+        fetch('exposés.json')
+            .then(response => response.json())
+            .then(data => {
+                exposés = data;
+                renderExposés();
+            })
+            .catch(error => {
+                console.error('Error loading exposés:', error);
+                // You can handle the error here, e.g., display a message
+            });
 
         exposéForm.addEventListener('submit', (event) => {
             event.preventDefault();
@@ -386,7 +392,7 @@
                     };
 
                     exposés.push(newExposé);
-                    localStorage.setItem('exposés', JSON.stringify(exposés));
+                    saveExposésToJSON(); // Update the JSON file
                     renderExposés();
 
                     exposéForm.reset();
@@ -402,7 +408,7 @@
                 };
 
                 exposés.push(newExposé);
-                localStorage.setItem('exposés', JSON.stringify(exposés));
+                saveExposésToJSON(); // Update the JSON file
                 renderExposés();
 
                 exposéForm.reset();
@@ -444,7 +450,7 @@
                 upvoteButton.addEventListener('click', () => {
                     const index = parseInt(upvoteButton.dataset.index);
                     exposés[index].upvotes++;
-                    localStorage.setItem('exposés', JSON.stringify(exposés));
+                    saveExposésToJSON(); // Update the JSON file
                     upvoteButton.classList.toggle('active');
                     downvoteButton.classList.remove('active');
                     upvoteCount.textContent = exposés[index].upvotes;
@@ -453,7 +459,7 @@
                 downvoteButton.addEventListener('click', () => {
                     const index = parseInt(downvoteButton.dataset.index);
                     exposés[index].downvotes++;
-                    localStorage.setItem('exposés', JSON.stringify(exposés));
+                    saveExposésToJSON(); // Update the JSON file
                     downvoteButton.classList.toggle('active');
                     upvoteButton.classList.remove('active');
                     downvoteCount.textContent = exposés[index].downvotes;
@@ -480,10 +486,28 @@
                 deleteButton.addEventListener('click', () => {
                     const index = parseInt(deleteButton.dataset.index);
                     exposés.splice(index, 1);
-                    localStorage.setItem('exposés', JSON.stringify(exposés));
+                    saveExposésToJSON(); // Update the JSON file
                     renderExposés();
                 });
             });
+        }
+
+        function saveExposésToJSON() {
+            const jsonData = JSON.stringify(exposés);
+            fetch('exposés.json', {
+                method: 'POST',
+                body: jsonData,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    console.log('Exposés saved to JSON file');
+                })
+                .catch(error => {
+                    console.error('Error saving exposés to JSON file:', error);
+                    // You can handle the error here, e.g., display a message
+                });
         }
     </script>
 </body>
