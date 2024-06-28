@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Reports</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+          integrity="sha512-iecdLmaskl7CVkqk1w27KPT3aU+wUNGM3bQ8fZ3ITdyM0zVTZwKfN0p0LmMXIlV1oHcqVR+CR+q2IGU3gf90xw=="
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        header {
+            background-color: #000;
+            padding: 2em 0;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+        h1 {
+            margin: 0;
+            font-size: 3em;
+            text-shadow: 0 0 10px #ff5722;
+        }
+        main {
+            flex: 1;
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 30px;
+            background-color: #181818;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 30px;
+        }
+        label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        textarea {
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #333;
+            border-radius: 10px;
+            background-color: #282828;
+            color: #fff;
+            font-size: 1.1em;
+            resize: vertical;
+        }
+        input[type="submit"] {
+            background-color: #ff5722;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: background-color 0.3s ease;
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+        input[type="submit"]:hover {
+            background-color: #ff7043;
+        }
+        .exposé {
+            border: 1px solid #333;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #282828;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+        .exposé h2 {
+            margin-top: 0;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+        .exposé p {
+            margin-bottom: 15px;
+            flex: 1;
+        }
+        .exposé button {
+            background-color: #ff5722;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: background-color 0.3s ease;
+            font-size: 1.1em;
+            margin-right: 10px;
+        }
+        .exposé button:hover {
+            background-color: #ff7043;
+        }
+        .exposé .icons {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+        .exposé .icons i {
+            margin-left: 10px;
+            font-size: 1.3em;
+            color: #ff5722;
+            cursor: pointer;
+        }
+        .exposé .actions {
+            display: flex;
+            align-items: center;
+        }
+        .exposé .actions .vote {
+            display: flex;
+            align-items: center;
+            margin-right: 10px;
+        }
+        .exposé .actions .vote i {
+            font-size: 1.2em;
+            color: #fff;
+            margin-right: 5px;
+            cursor: pointer;
+        }
+        .exposé .actions .vote i.active {
+            color: #ff5722;
+        }
+        .exposé .actions .vote .count {
+            font-size: 1.1em;
+            color: #fff;
+        }
+        .exposé .actions .report {
+            background-color: #ff5722;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: background-color 0.3s ease;
+            font-size: 1.1em;
+        }
+        .exposé .actions .report:hover {
+            background-color: #ff7043;
+        }
+        .exposé .actions .delete {
+            background-color: #ff5722;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: background-color 0.3s ease;
+            font-size: 1.1em;
+            margin-left: 10px;
+        }
+        .exposé .actions .delete:hover {
+            background-color: #ff7043;
+        }
+        .exposé .actions .delete.hidden {
+            display: none;
+        }
+        .exposé .profile-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+        .exposé .delete-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5em;
+            color: #ff5722;
+            cursor: pointer;
+        }
+        footer {
+            background-color: #000;
+            padding: 1em 0;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+        footer p {
+            margin: 0;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+        .input-group label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .input-group input[type="text"],
+        .input-group textarea {
+            padding: 10px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            background-color: #282828;
+            color: #fff;
+        }
+        .input-group input[type="file"] {
+            padding: 10px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            background-color: #282828;
+            color: #fff;
+            margin-top: 5px;
+        }
+        .input-group input[type="submit"] {
+            background-color: #ff5722;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+        .input-group input[type="submit"]:hover {
+            background-color: #ff7043;
+        }
+        .exposé-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .exposé-card {
+            border: 1px solid #333;
+            padding: 20px;
+            background-color: #282828;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        .exposé-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        .exposé-card h2 {
+            margin-top: 0;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+        .exposé-card p {
+            margin-bottom: 15px;
+        }
+        .exposé-card .actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .exposé-card .actions .vote {
+            display: flex;
+            align-items: center;
+        }
+        .exposé-card .actions .vote i {
+            font-size: 1.2em;
+            color: #fff;
+            margin-right: 5px;
+            cursor: pointer;
+        }
+        .exposé-card .actions .vote i.active {
+            color: #ff5722;
+        }
+        .exposé-card .actions .vote .count {
+            font-size: 1.1em;
+            color: #fff;
+        }
+        .exposé-card .actions .report {
+            background-color: #ff5722;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .exposé-card .actions .report:hover {
+            background-color: #ff7043;
+        }
+        .exposé-card .actions .delete {
+            background-color: #ff5722;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .exposé-card .actions .delete:hover {
+            background-color: #ff7043;
+        }
+        .exposé-card .actions .delete.hidden {
+            display: none;
+        }
+        .exposé-card .delete-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5em;
+            color: #ff5722;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>View Reports</h1>
+    </header>
+    <main class="container">
+        <div id="reports" class="exposé-container"></div>
+    </main>
+
+    <script>
+        const reportsContainer = document.getElementById('reports');
+        let reports = [];
+
+        // Load existing reports from local storage
+        if (localStorage.getItem('reports')) {
+            reports = JSON.parse(localStorage.getItem('reports'));
+            renderReports();
+        }
+
+        function renderReports() {
+            reportsContainer.innerHTML = ''; // Clear existing content
+
+            reports.forEach((report, index) => {
+                const newReport = document.createElement('div');
+                newReport.classList.add('exposé-card');
+                newReport.innerHTML = `
+                    <img src="${report.image}" alt="Report Image">
+                    <h2>${report.name}</h2>
+                    <p>${report.description}</p>
+                `;
+                reportsContainer.appendChild(newReport);
+            });
+        }
+    </script>
+</body>
+</html>
