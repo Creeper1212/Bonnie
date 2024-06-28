@@ -338,11 +338,17 @@
         const reportsContainer = document.getElementById('reports');
         let reports = [];
 
-        // Load existing reports from local storage
-        if (localStorage.getItem('reports')) {
-            reports = JSON.parse(localStorage.getItem('reports'));
-            renderReports();
-        }
+        // Load existing reports from JSON file
+        fetch('reports.json')
+            .then(response => response.json())
+            .then(data => {
+                reports = data;
+                renderReports();
+            })
+            .catch(error => {
+                console.error('Error loading reports:', error);
+                // You can handle the error here, e.g., display a message
+            });
 
         function renderReports() {
             reportsContainer.innerHTML = ''; // Clear existing content
