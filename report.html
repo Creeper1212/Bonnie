@@ -353,11 +353,17 @@
         const reportsContainer = document.getElementById('reports');
         let reports = [];
 
-        // Load existing reports from local storage
-        if (localStorage.getItem('reports')) {
-            reports = JSON.parse(localStorage.getItem('reports'));
-            renderReports();
-        }
+        // Load existing reports from JSON file
+        fetch('reports.json')
+            .then(response => response.json())
+            .then(data => {
+                reports = data;
+                renderReports();
+            })
+            .catch(error => {
+                console.error('Error loading reports:', error);
+                // You can handle the error here, e.g., display a message
+            });
 
         reportForm.addEventListener('submit', (event) => {
             event.preventDefault();
@@ -376,7 +382,7 @@
                     };
 
                     reports.push(newReport);
-                    localStorage.setItem('reports', JSON.stringify(reports));
+                    saveReportsToJSON(); // Update the JSON file
                     renderReports();
 
                     reportForm.reset();
@@ -390,7 +396,7 @@
                 };
 
                 reports.push(newReport);
-                localStorage.setItem('reports', JSON.stringify(reports));
+                saveReportsToJSON(); // Update the JSON file
                 renderReports();
 
                 reportForm.reset();
@@ -410,6 +416,24 @@
                 `;
                 reportsContainer.appendChild(newReport);
             });
+        }
+
+        function saveReportsToJSON() {
+            const jsonData = JSON.stringify(reports);
+            fetch('reports.json', {
+                method: 'POST',
+                body: jsonData,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    console.log('Reports saved to JSON file');
+                })
+                .catch(error => {
+                    console.error('Error saving reports to JSON file:', error);
+                    // You can handle the error here, e.g., display a message
+                });
         }
     </script>
 </body>
